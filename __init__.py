@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route("/contact/")
 def MaPremiereAPI():
-    return "<h2>Ma page de contact</h2>"
+    return render_template("formulaire.html")
 
 @app.route('/tawarano/')
 def meteo():
@@ -30,6 +30,10 @@ def mongraphique():
 @app.route("/histogramme/")
 def mongraphique2():
     return render_template("graphique2.html")
+
+#@app.route("/contact/")
+#def MaPremiereAPI():
+    #return "<h2>Ma page de contact</h2>"
 
 @app.route('/')
 def hello_world():
