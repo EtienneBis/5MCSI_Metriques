@@ -49,6 +49,9 @@ def NbCommits():
     return render_template('commits.html', plot_url=plot_url)
 
 
+
+
+
 @app.route("/contact/")
 def MaPremiereAPI():
     return render_template("formulaire.html")
@@ -72,6 +75,7 @@ def mongraphique():
 @app.route("/histogramme/")
 def mongraphique2():
     return render_template("graphique2.html")
+
 
 #@app.route("/contact/")
 #def MaPremiereAPI():
