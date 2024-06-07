@@ -4,10 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nombre de Commits par Minute</title>
+    <title>Graphique des Commits</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Nombre de Commits par Minute</h1>
-    <img src="data:image/png;base64,{{ plot_url }}" alt="Graphique des Commits par Minute">
+    <h1>Graphique des Commits</h1>
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <script>
+        fetch('/commits/data')
+            .then(response => response.json())
+            .then(data => {
+                const labels = Array.from({length: 60}, (_, i) => i);
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Nombre de Commits par Minute',
+                            data: data.commit_minutes,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
 </body>
 </html>
