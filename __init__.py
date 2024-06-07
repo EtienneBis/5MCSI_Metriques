@@ -4,8 +4,50 @@ from flask import json
 from datetime import datetime
 from urllib.request import urlopen
 import sqlite3
+
+import requests
+from datetime import datetime
+import matplotlib.pyplot as plt
+import io
+import base64
                                                                                                                                        
 app = Flask(__name__)                                                                                                                  
+
+def extract_minutes(date_string):
+        date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+        minutes = date_object.minute
+
+@app.route('/commits/')
+def NbCommits():
+    # Requête pour obtenir les commits depuis l'API GitHub
+    response = requests.get(GITHUB_API_URL)
+    commits_data = response.json()
+    
+    # Extraction des minutes de chaque commit
+    commit_minutes = [extract_minutes(commit['commit']['author']['date']) for commit in commits_data]
+    
+    # Comptage des commits par minute
+    minutes_count = [commit_minutes.count(i) for i in range(60)]
+    
+    # Création du graphique
+    plt.figure(figsize=(10, 5))
+    plt.bar(range(60), minutes_count, color='skyblue')
+    plt.xlabel('Minutes')
+    plt.ylabel('Nombre de Commits')
+    plt.title('Nombre de Commits par Minute')
+    plt.xticks(range(0, 60, 5))
+    
+    # Sauvegarde du graphique dans un objet BytesIO
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    
+    # Encodage de l'image en base64 pour l'afficher sur la page HTML
+    plot_url = base64.b64encode(img.getvalue()).decode('utf8')
+    
+    # Rendu du template avec le graphique
+    return render_template('commits.html', plot_url=plot_url)
+
 
 @app.route("/contact/")
 def MaPremiereAPI():
@@ -30,16 +72,6 @@ def mongraphique():
 @app.route("/histogramme/")
 def mongraphique2():
     return render_template("graphique2.html")
-
-@app.route("/commits/")
-def NbCommits():
-    return "<h2>Ma page de contact</h2>"
-
-@app.route('/extract-minutes/<date_string>')
-def extract_minutes(date_string):
-        date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-        minutes = date_object.minute
-        return jsonify({'minutes': minutes})
 
 #@app.route("/contact/")
 #def MaPremiereAPI():
