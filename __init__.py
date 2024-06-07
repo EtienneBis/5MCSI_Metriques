@@ -17,7 +17,8 @@ GITHUB_API_URL = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
 
 def extract_minutes(date_string):
         date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-        minutes = date_object.minute
+        #minutes = date_object.minute
+        return date_object.minute
 
 @app.route('/commits/')
 def NbCommits():
