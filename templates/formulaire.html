@@ -49,6 +49,15 @@
         .form-group textarea {
             height: 100px;
         }
+        .form-group .checkbox-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .form-group .checkbox-group input {
+            width: auto;
+            height: auto;
+        }
         .form-group button {
             width: 100%;
             padding: 10px;
@@ -81,6 +90,20 @@
             <div class="form-group">
                 <label for="last-name">Nom</label>
                 <input type="text" id="last-name" name="last-name" placeholder="Votre nom" required>
+            </div>
+            <div class="form-group">
+                <label>Sexe</label>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="gender" value="homme"> Homme
+                    </label>
+                    <label>
+                        <input type="checkbox" name="gender" value="femme"> Femme
+                    </label>
+                    <label>
+                        <input type="checkbox" name="gender" value="autre"> Autre
+                    </label>
+                </div>
             </div>
             <div class="form-group">
                 <label for="message">Message</label>
