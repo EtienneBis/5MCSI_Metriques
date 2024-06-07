@@ -1,43 +1,52 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphique des Commits</title>
+    <title>Commits Graph</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <h1>Graphique des Commits</h1>
-    <canvas id="myChart" width="400" height="200"></canvas>
 
+<body>
+    <h1>Commits Graph</h1>
+    <canvas id="commitsChart" width="400" height="200"></canvas>
     <script>
-        fetch('/commits/data')
-            .then(response => response.json())
-            .then(data => {
-                const labels = Array.from({length: 60}, (_, i) => i);
-                const ctx = document.getElementById('myChart').getContext('2d');
-                const myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Nombre de Commits par Minute',
-                            data: data.commit_minutes,
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
+        async function fetchCommitsData() {
+            const response = await fetch('/commits/data');
+            const data = await response.json();
+            return data.commit_minutes;
+        }
+
+        function renderChart(commitMinutes) {
+            const ctx = document.getElementById('commitsChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line', // Vous pouvez aussi utiliser 'bar', 'pie', etc.
+                data: {
+                    labels: commitMinutes.map((minute, index) => index + 1),
+                    datasets: [{
+                        label: 'Commits per Minute',
+                        data: commitMinutes,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
-                });
+                }
             });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const commitMinutes = await fetchCommitsData();
+            renderChart(commitMinutes);
+        });
     </script>
 </body>
+
 </html>
