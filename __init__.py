@@ -4,56 +4,31 @@ from flask import json
 from datetime import datetime
 from urllib.request import urlopen
 import sqlite3
-
-import requests
-from datetime import datetime
-import matplotlib.pyplot as plt
-import io
-import base64
                                                                                                                                        
 app = Flask(__name__)                                                                                                                  
 
-GITHUB_API_URL = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
-
-def extract_minutes(date_string):
+@app.route('/commits/data')
+def get_commits_data():
+    url = 'https://api.github.com/repos/EtienneBis/5MCSI_Metriques/commits'
+    response = urlopen(url)
+    raw_content = response.read()
+    json_content = json.loads(raw_content.decode('utf-8'))
+    
+    commit_minutes = []
+    for commit in json_content:
+        date_string = commit['commit']['author']['date']
         date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-        #minutes = date_object.minute
-        return date_object.minute
-
-@app.route('/commits/')
-def NbCommits():
-    # Requête pour obtenir les commits depuis l'API GitHub
-    response = requests.get(GITHUB_API_URL)
-    commits_data = response.json()
+        commit_minutes.append(date_object.minute)
     
-    # Extraction des minutes de chaque commit
-    commit_minutes = [extract_minutes(commit['commit']['author']['date']) for commit in commits_data]
-    
-    # Comptage des commits par minute
-    minutes_count = [commit_minutes.count(i) for i in range(60)]
-    
-    # Création du graphique
-    plt.figure(figsize=(10, 5))
-    plt.bar(range(60), minutes_count, color='skyblue')
-    plt.xlabel('Minutes')
-    plt.ylabel('Nombre de Commits')
-    plt.title('Nombre de Commits par Minute')
-    plt.xticks(range(0, 60, 5))
-    
-    # Sauvegarde du graphique dans un objet BytesIO
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
-    
-    # Encodage de l'image en base64 pour l'afficher sur la page HTML
-    plot_url = base64.b64encode(img.getvalue()).decode('utf8')
-    
-    # Rendu du template avec le graphique
-    return render_template('commits.html', plot_url=plot_url)
+    return jsonify(commit_minutes=commit_minutes)
 
 
 
 
+
+@app.route("/commits/")
+def commits():
+    return render_template("commits.html")
 
 @app.route("/contact/")
 def MaPremiereAPI():
