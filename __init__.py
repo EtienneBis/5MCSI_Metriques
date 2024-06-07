@@ -31,6 +31,10 @@ def mongraphique():
 def mongraphique2():
     return render_template("graphique2.html")
 
+@app.route("/commits/")
+def CbCommits():
+    return "<h2>Ma page de contact</h2>"
+
 #@app.route("/contact/")
 #def MaPremiereAPI():
     #return "<h2>Ma page de contact</h2>"
